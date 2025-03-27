@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Scores</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; text-align: center; background: linear-gradient(135deg, #1e1e2e, #3a3a6b); color: white; padding: 20px; }
+        .container { max-width: 500px; margin: auto; padding: 20px; background: rgba(41, 41, 69, 0.9); border-radius: 15px; box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2); }
+        .btn { padding: 15px; width: 100%; margin-top: 10px; border: none; cursor: pointer; font-size: 16px; border-radius: 8px; }
+        .back-btn { background: #ff6b6b; color: white; }
+        .score-box { font-size: 22px; font-weight: bold; margin: 20px 0; color: #ffdf6b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Total Scores</h1>
+        <p class="score-box">Your Score: <span id="total-score">0</span></p>
+        <button class="btn back-btn" onclick="location.href='index.html'">Back to Home</button>
+    </div>
+    
+    <script>
+        let userScore = localStorage.getItem("totalScore") || 0;
+        document.getElementById("total-score").innerText = userScore;
+    </script>
+</body>
+</html>

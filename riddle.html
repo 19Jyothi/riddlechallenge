@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riddle Challenge</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; text-align: center; background: linear-gradient(135deg, #1e1e2e, #3a3a6b); color: white; padding: 20px; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 500px; padding: 20px; background: rgba(41, 41, 69, 0.9); border-radius: 15px; box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2); }
+        .btn { padding: 15px; width: 100%; margin-top: 10px; border: none; cursor: pointer; font-size: 16px; border-radius: 8px; transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
+        .btn:hover { transform: scale(1.08); box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3); }
+        .submit-btn { background: #51cf66; color: white; }
+        .hint-btn { background: #ffa94d; color: white; }
+        .next-btn { background: #4dabf7; color: white; }
+        .back-btn { background: #ff6b6b; color: white; }
+        .timer { font-size: 20px; margin-bottom: 10px; color: #ffdf6b; font-weight: bold; }
+        .question-number { font-size: 18px; margin-bottom: 10px; color: #ffdf6b; font-weight: bold; }
+        .hint-container { font-size: 18px; margin-bottom: 10px; color: #ffdf6b; display: flex; justify-content: center; align-items: center; }
+        .hint-container span { margin-left: 8px; font-size: 22px; font-weight: bold; color: #fff; }
+        .riddle-box { font-size: 18px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2); margin-bottom: 15px; }
+        .input-box { padding: 12px; width: 90%; border-radius: 8px; border: none; text-align: center; font-size: 18px; background: rgba(255, 255, 255, 0.2); color: white; box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3); }
+        .result-message { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hint-container">
+            <span>💡 Hints Left:</span> <span id="hint-count">0</span>
+        </div>
+        <h1>Riddle Challenge</h1>
+        <p class="question-number">Question <span id="question-number">1</span> of 10</p>
+        <p class="timer" id="timer">Time left: 20s</p>
+        <div class="riddle-box" id="riddle">Loading riddle...</div>
+        <input type="text" id="answer" class="input-box" placeholder="Type your answer...">
+        <button class="btn submit-btn" onclick="checkAnswer()">Submit Answer</button>
+        <button class="btn hint-btn" onclick="useHint()">Use Hint</button>
+        <button class="btn next-btn" onclick="getRiddle()">Next Question</button>
+        <button class="btn back-btn" onclick="location.href='index.html'">Back to Home</button>
+        <p id="result-message" class="result-message"></p>
+    </div>
+    
+    <script>
+        let timeLeft = 20;
+        let timerInterval;
+        let correctAnswer = "";
+        let hintCount = 0;
+        let questionCount = 1;
+        const totalQuestions = 10;
+        let userResponses = [];
+
+        function startTimer() {
+            timeLeft = 20;
+            document.getElementById("timer").innerText = `Time left: ${timeLeft}s`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    document.getElementById("timer").innerText = `Time left: ${timeLeft}s`;
+                } else {
+                    clearInterval(timerInterval);
+                    getRiddle();
+                }
+            }, 1000);
+        }
+
+        function getRiddle() {
+            if (questionCount > totalQuestions) {
+                localStorage.setItem("userResponses", JSON.stringify(userResponses));
+                location.href = 'results.html';
+                return;
+            }
+            fetch("https://riddles-api.vercel.app/random")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("riddle").innerText = data.riddle;
+                    correctAnswer = data.answer.toLowerCase();
+                    document.getElementById("question-number").innerText = questionCount;
+                    document.getElementById("answer").value = ""; // Clear previous answer
+                    document.getElementById("result-message").innerText = ""; // Clear previous result message
+                    questionCount++;
+                    startTimer();
+                });
+        }
+
+        function checkAnswer() {
+            let userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+            let resultMessage = document.getElementById("result-message");
+            let result = userAnswer === correctAnswer ? "correct" : "wrong";
+            userResponses.push({ question: document.getElementById("riddle").innerText, userAnswer, correctAnswer, result });
+            resultMessage.innerText = result === "correct" ? "Correct! 🎉" : "Wrong answer! ❌";
+            resultMessage.className = `result-message ${result}`;
+            setTimeout(getRiddle, 1000);
+        }
+        
+        function useHint() {
+            if (hintCount > 0) {
+                hintCount--;
+                document.getElementById("hint-count").innerText = hintCount;
+            }
+        }
+        
+        window.onload = getRiddle;
+    </script>
+</body>
+</html>
