@@ -29,7 +29,7 @@
         </div>
         <h1>Riddle Challenge</h1>
         <p class="question-number">Question <span id="question-number">1</span> of 10</p>
-        <p class="timer" id="timer">Time left: 20s</p>
+        <p class="timer" id="timer">Time left: 30s</p>
         <div class="riddle-box" id="riddle">Loading riddle...</div>
         <input type="text" id="answer" class="input-box" placeholder="Type your answer...">
         <button class="btn submit-btn" onclick="checkAnswer()">Submit Answer</button>
@@ -40,7 +40,7 @@
     </div>
     
     <script>
-        let timeLeft = 20;
+        let timeLeft = 30;
         let timerInterval;
         let correctAnswer = "";
         let hintCount = 0;
@@ -49,7 +49,7 @@
         let userResponses = [];
 
         function startTimer() {
-            timeLeft = 20;
+            timeLeft = 30;
             document.getElementById("timer").innerText = `Time left: ${timeLeft}s`;
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
